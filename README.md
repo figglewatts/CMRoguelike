@@ -1,6 +1,7 @@
 # CMRoguelike
 
-A Roguelike made in 42 hours for Chelmsford Makerspace's CMJam. See: <a href="http://gamejam.cmspace.org">gamejam.cmspace.org</a>.
+A Roguelike made in 42 hours (originally) for Chelmsford Makerspace's CMJam. See: <a href="http://gamejam.cmspace.org">gamejam.cmspace.org</a>.
+I'm now updating it regularly to make it into a fully-fledged Roguelike.
 
 ---
 
