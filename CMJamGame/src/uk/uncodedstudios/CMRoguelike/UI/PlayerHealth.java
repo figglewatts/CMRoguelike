@@ -19,7 +19,7 @@ public class PlayerHealth {
 	}
 	
 	public static void Draw(SpriteBatch batch) {
-		font.draw(batch, "HP: " + CMRoguelike.player.getHealth() + "/" + CMRoguelike.player.getMaxHealth(), 10, (Gdx.graphics.getHeight() - font.getLineHeight()));
-		font.draw(batch, "Kills: " + CMRoguelike.numberOfKills + "/" + CMRoguelike.numberOfMonsters, 10, (Gdx.graphics.getHeight() - font.getLineHeight()*2));
+		font.draw(batch, "HP: " + CMRoguelike.player.getHealth() + "/" + CMRoguelike.player.getMaxHealth(), 10, font.getLineHeight()*1);
+		font.draw(batch, "Kills: " + CMRoguelike.numberOfKills + "/" + CMRoguelike.numberOfMonsters, 10, font.getLineHeight()*2);
 	}
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import uk.uncodedstudios.CMRoguelike.CMRoguelike;
 import uk.uncodedstudios.CMRoguelike.Entity;
+import uk.uncodedstudios.CMRoguelike.Character.Player;
 import uk.uncodedstudios.CMRoguelike.Messaging.MessageBox;
 
 
@@ -82,18 +83,19 @@ public class Fighter extends Entity {
 		}
 		
 		if (this.health <= 0 && this.isAlive == true) {
-			this.isAlive = false;
-			this.setEntityTexture(EntityTextures.deadBody);
-			this.setBlocksMovement(false);
-			this.setCanDraw(false);
-			//Entity deadBody = new Entity("Dead " + this.getName(), this.getxPos(), this.getyPos(), EntityTextures.deadBody);
-			//deadBody.setBlocksMovement(false);
-			if (this.getName() != "player") {
-				//this.kill();
-				CMRoguelike.numberOfKills += 1;
-			} else {
-				CMRoguelike.player.setAlive(false);
+			synchronized (CMRoguelike.entityList) {
+				if (this instanceof Player) {
+					this.setCanDraw(false);
+					this.setAlive(false);
+				} else {
+					this.die();
+					CMRoguelike.numberOfKills += 1;
+				}
 			}
+		}
+		
+		if (this.health < 0) {
+			this.setHealth(0);
 		}
 	}
 	
@@ -113,5 +115,10 @@ public class Fighter extends Entity {
 		if (this.health > this.maxHealth) {
 			this.health = this.maxHealth;
 		}
+	}
+	
+	public void die() {
+		Entity deadBody = new Entity("Dead " + this.getName(), this.getxPos(), this.getyPos(), EntityTextures.deadBody);
+		deadBody.setBlocksMovement(false);
 	}
 }

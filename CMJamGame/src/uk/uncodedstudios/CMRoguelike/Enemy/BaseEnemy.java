@@ -2,6 +2,7 @@ package uk.uncodedstudios.CMRoguelike.Enemy;
 
 import uk.uncodedstudios.CMRoguelike.CMRoguelike;
 import uk.uncodedstudios.CMRoguelike.Entity;
+import uk.uncodedstudios.CMRoguelike.Entities.EntityTextures;
 import uk.uncodedstudios.CMRoguelike.Entities.Fighter;
 import uk.uncodedstudios.CMRoguelike.util.MapUtil;
 
@@ -27,4 +28,9 @@ public class BaseEnemy extends Fighter {
 			}
 		}
 	}	
+	
+	public void die() {
+		super.die();
+		CMRoguelike.entityList.remove(this);
+	}
 }

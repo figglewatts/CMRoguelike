@@ -27,6 +27,12 @@ public class Player extends Fighter{
 	
 	public int xSample;
 	public int ySample;
+	
+	public enum Race {
+		HUMAN, ELF, DWARF;
+	}
+	
+	private Race playerRace;
 
 	// TODO: Skills
 
@@ -38,8 +44,32 @@ public class Player extends Fighter{
 		this.hunger = hunger;
 	}
 	
+	public Race getPlayerRace() {
+		return playerRace;
+	}
+
+	public void setPlayerRace(Race playerRace) {
+		this.playerRace = playerRace;
+	}
+
 	public Player(String name, int x, int y, int defense, int attack, int health, int mana) {
 		super(name, x, y, defense, attack, health, mana);
+		if (this.playerRace == Race.HUMAN) {
+			this.setHealth(30);
+			this.setDefense(2);
+			this.setAttack(2);
+			this.setMana(10);
+		} else if (this.playerRace == Race.ELF) {
+			this.setHealth(20);
+			this.setDefense(2);
+			this.setAttack(2);
+			this.setMana(30);
+		} else if (this.playerRace == Race.DWARF) {
+			this.setHealth(40);
+			this.setDefense(3);
+			this.setAttack(3);
+			this.setMana(5);
+		}
 	}
 
 	public void draw(SpriteBatch batch)
@@ -96,40 +126,68 @@ public class Player extends Fighter{
 	}
 	
 	public void FOV(Level myMap) {
-		double x, y, ax, ay;
+		double x, y, ax, ay, xInTiles, yInTiles;
 		MapUtil.ClearMapToNotViewable();
+		// iterate through each of the 360 degrees
 		for (int i = 0; i < 360; i++)
 		{
-			ax = Math.sin(i * 0.01745F);
-			ay = Math.cos(i * 0.01745F);
+			/* i needs to be converted to radians, then the sine of it
+			 * needs to be worked out, so that the ray casted will travel
+			 * in the right direction
+			 * the sine of i is how much (along the x axis) the ray needs to travel
+			 * each time it's iterated
+			 * of course, this value will be different based on the angle
+			 * specified
+			 *
+			 * Interpret this as:
+			 * "Distance to travel on X axis = Sine of the ray direction in radians
+			 * multiplied by the pixel width each tile is rendered as"
+			 */ 
+			ax = Math.sin(i * 0.01745F)*Tile.RenderTileWidth;
+			/* ay is how much to add on the y axis each time the ray travels
+			 * it's the same as before (convert to radians etc.)
+			 * but this time with cosine, because it's the Y axis
+			 */
+			ay = Math.cos(i * 0.01745F)*Tile.RenderTileHeight;
 			
-			x = (this.getxPos() + Tile.RenderTileWidth / 2) / Tile.RenderTileWidth;
-			y = (this.getyPos() + Tile.RenderTileHeight / 2) / Tile.RenderTileHeight;
+			// get the X and Y position of the player
+			// add half of the RenderTileWidth/Height to make sure it's centered
+			x = (this.getxPos() + Tile.RenderTileWidth / 2);
+			y = (this.getyPos() + Tile.RenderTileHeight / 2);
 			
+			// iterates how far the ray can travel
 			for (int z = 0; z < 9; z++)
 			{
-				x += ax;
-				y += ay;
+				x += ax; // add the distance to travel along the X axis
+				y += ay; // add the distance to travel along the Y axis
 				
 				xSample = (int)x;
 				ySample = (int)y;
 				
-				if (x < 0 || y < 0 || x > myMap.MapWidth || y > myMap.MapHeight) {
-					//System.out.println("Hit edge of map while computing.");
+				// if we hit the edge of the map, stop travelling
+				if (x < 0 || y < 0 || x > myMap.MapWidth*Tile.RenderTileWidth || y > myMap.MapHeight*Tile.RenderTileHeight) {
 					break;
 				}
 				
-				//System.out.println("X: " + x + ", Y: " + y);
+				// convert the X and Y pixel positions to tile positions
+				xInTiles = x/Tile.RenderTileWidth;
+				yInTiles = y/Tile.RenderTileHeight;
 				
-				myMap.Rows.get((int)y).Columns.get((int)x).setIsExplored(true);
-				myMap.Rows.get((int)y).Columns.get((int)x).setIsViewable(true);
+				/* set the player's position to be explored and viewable
+				 * this needs to be done, otherwise the tile the player is
+				 * on will be out of sight
+				 */
+				myMap.Rows.get(this.getyPosInTiles()).Columns.get(this.getxPosInTiles()).setIsExplored(true);
+				myMap.Rows.get(this.getyPosInTiles()).Columns.get(this.getxPosInTiles()).setIsViewable(true);
 				
-				if (myMap.Rows.get((int)y).Columns.get((int)x).getIsSolid()) {
-					//System.out.println("Hit solid wall while computing.");
+				// set the tiles we hit to be explored and viewable
+				myMap.Rows.get((int)yInTiles).Columns.get((int)xInTiles).setIsExplored(true);
+				myMap.Rows.get((int)yInTiles).Columns.get((int)xInTiles).setIsViewable(true);
+				
+				// if we hit a solid wall, stop travelling
+				if (myMap.Rows.get((int)yInTiles).Columns.get((int)xInTiles).getIsSolid()) {
 					break;
 				}
-				
-				//System.out.println(myMap.Rows.get((int)y).Columns.get((int)x).getIsExplored());
 			}
 		}
 	}

@@ -1,8 +1,15 @@
 package uk.uncodedstudios.CMRoguelike.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.badlogic.gdx.math.Vector2;
+
 import uk.uncodedstudios.CMRoguelike.CMRoguelike;
 import uk.uncodedstudios.CMRoguelike.Entity;
 import uk.uncodedstudios.CMRoguelike.Dungeon.Dungeon;
+import uk.uncodedstudios.CMRoguelike.Dungeon.JSONRoom;
+import uk.uncodedstudios.uncode2d.tileengine.Tile;
 
 public class MapUtil {
 	private MapUtil() { }
@@ -12,14 +19,23 @@ public class MapUtil {
 		if (Dungeon.dungeon.Rows.get(y).Columns.get(x).getIsSolid()) {
 			return true;
 		}
-		
-		for (Entity entity : CMRoguelike.entityList)
-		{
+		for (Entity entity : CMRoguelike.entityList){
 			if (entity.isBlocksMovement() && entity.getxPosInTiles() == x && entity.getyPosInTiles() == y) {
 				return true;
 			}
 		}
-		
+		return false;
+	}
+	public static boolean IsBlocked(Vector2 v)
+	{
+		if (Dungeon.dungeon.Rows.get((int)v.y).Columns.get((int)v.x).getIsSolid()) {
+			return true;
+		}
+		for (Entity entity : CMRoguelike.entityList) {
+			if (entity.isBlocksMovement() && entity.getxPosInTiles() == (int)v.x && entity.getyPosInTiles() == (int)v.y) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -51,6 +67,40 @@ public class MapUtil {
 			return true;
 		} else { 
 			return false;
+		}
+	}
+	
+	/**
+	 * Gets a list of the non solid tiles in a JSONRoom
+	 */
+	public static List<Vector2> GetRoomNonSolidTiles(JSONRoom room) 
+	{
+		List<Vector2> tileList = new ArrayList<Vector2>();
+		int[][] layout = room.getLayout();
+		
+		for (int y = 0; y < room.getHeight(); y++) {
+			for (int x = 0; x < room.getWidth(); x++) {
+				if (layout[y][x] != 0) {
+					tileList.add(new Vector2(x, y));
+				}
+			} 
+		}
+		if (tileList.size() > 0) {
+			return tileList;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Converts map dimensions from pixels to tiles
+	 */
+	public static int normalizeToTileDimensions(int num, boolean width)
+	{
+		if (width) {
+			return (num / Tile.RenderTileWidth);
+		} else {
+			return (num / Tile.RenderTileHeight);
 		}
 	}
 }

@@ -1,12 +1,17 @@
 package uk.uncodedstudios.CMRoguelike;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import uk.uncodedstudios.CMRoguelike.Character.Player;
 import uk.uncodedstudios.CMRoguelike.Dungeon.Dungeon;
+import uk.uncodedstudios.CMRoguelike.Dungeon.RoomReader;
 import uk.uncodedstudios.CMRoguelike.Enemy.BaseEnemy;
 import uk.uncodedstudios.CMRoguelike.Enemy.EnemyTextures;
+import uk.uncodedstudios.CMRoguelike.Entities.EntityTextures;
+import uk.uncodedstudios.CMRoguelike.Entities.Fighter;
 import uk.uncodedstudios.CMRoguelike.Messaging.Message;
 import uk.uncodedstudios.CMRoguelike.Messaging.MessageBox;
 import uk.uncodedstudios.CMRoguelike.UI.PlayerHealth;
@@ -68,7 +73,10 @@ public class CMRoguelike implements ApplicationListener {
 		player.setEntityTexture(playerTexture);
 		player.setScale(2);
 		
+		RoomReader.Initialize();
+		
 		EnemyTextures.Initialize();
+		EntityTextures.Initialize();
 		
 		Dungeon.Initialize();
 		Dungeon.Generate();
@@ -104,23 +112,36 @@ public class CMRoguelike implements ApplicationListener {
 		
 		//Camera.Location = new Vector2(player.getxPos() + Gdx.graphics.getWidth()/2, player.getyPos() + Gdx.graphics.getWidth()/2);
 		
-		for (Entity entity : entityList)
+		Entity[] entityArray = entityList.toArray(new Entity[entityList.size()]);
+		for (Entity e : entityArray)
 		{
-			entity.draw(batch);
-			if (entity instanceof BaseEnemy) {
+			e.draw(batch);
+			if (e instanceof BaseEnemy) {
 				if (turnTake) {
-					if (((BaseEnemy)entity).isAlive()) {
-						((BaseEnemy)entity).takeTurn();
-					}
+					if (((BaseEnemy)e).isAlive()) {
+						((BaseEnemy)e).takeTurn();					}
 				}
 			}
 		}
+		
+		/*for (Iterator<Entity> it = entityList.iterator(); it.hasNext();)
+		{
+			Entity e = (Entity)it.next();
+			e.draw(batch);
+			if (e instanceof BaseEnemy) {
+				if (turnTake) {
+					if (((BaseEnemy)e).isAlive()) {
+						((BaseEnemy)e).takeTurn();
+					}
+				}
+			}
+		}*/
 		
 		// print the game messages
 		int y = 0;
 		for (Message message : MessageBox.messageList)
 		{
-			message.setYPos((y * (MessageBox.font.getLineHeight())) + MessageBox.font.getLineHeight());
+			message.setYPos(Gdx.graphics.getHeight() - (y * (MessageBox.font.getLineHeight())));
 			message.setXPos(10);
 			message.draw(batch);
 			y++;

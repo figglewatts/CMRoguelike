@@ -6,6 +6,10 @@ import java.util.List;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * Class now obsolete. JSONRoom.java is used instead.
+ * @author Figglewatts
+ */
 public class Room {
 	// TODO: Put some stuff here
 	private int roomX;

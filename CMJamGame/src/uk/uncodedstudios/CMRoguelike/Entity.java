@@ -130,6 +130,6 @@ public class Entity {
 	public void kill() {
 		this.canDraw = false;
 		this.setEntityTexture(null);
-		this.setName("null");
+		this.setName("dead");
 	}
 }
