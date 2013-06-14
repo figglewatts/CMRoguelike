@@ -1,12 +1,14 @@
 package uk.uncodedstudios.CMRoguelike.Dungeon;
 
+import uk.uncodedstudios.CMRoguelike.JSON.JSONObject;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 /**
  * @author Figglewatts
  */
-public class JSONRoom {
+public class JSONRoom extends JSONObject {
 	private int width;
 	private int height;
 	private String name;

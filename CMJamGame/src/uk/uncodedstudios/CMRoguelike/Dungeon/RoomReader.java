@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.uncodedstudios.CMRoguelike.JSON.JSONObject;
+import uk.uncodedstudios.CMRoguelike.util.JSONUtil;
+
 import com.badlogic.gdx.Gdx;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
@@ -20,7 +23,7 @@ import com.google.gson.stream.JsonReader;
 public class RoomReader {
 	private RoomReader() { }
 	
-	public static List<JSONRoom> roomList = new ArrayList<JSONRoom>();
+	public static List<JSONObject> roomList = new ArrayList<JSONObject>();
 	
 	public static Map<String, JSONRoom> roomMap = new HashMap<String, JSONRoom>();
 	
@@ -29,25 +32,23 @@ public class RoomReader {
 	public static void Initialize()
 	{
 		try {
-			roomList = readJsonStream(Gdx.files.internal("data/rooms.json").read());
+			roomList = JSONUtil.readJsonStream(Gdx.files.internal("data/rooms.json").read(), gson);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		for (JSONRoom room : roomList) {
-			roomMap.put(room.getName(), room);
+		for (JSONObject room : roomList) {
+			// DEEZ CASTS
+			roomMap.put(((JSONRoom)room).getName(), (JSONRoom)room);
 		}
 	}
 	
-	private static List<JSONRoom> readJsonStream(InputStream in) throws IOException
-	{
-		JsonReader reader = new JsonReader(new InputStreamReader(in));
-		JsonParser jsonParser = new JsonParser();
-		JsonArray roomArray = jsonParser.parse(reader).getAsJsonArray();
-		List<JSONRoom> rooms = new ArrayList<JSONRoom>();
-		for (JsonElement aRoom : roomArray) {
-			JSONRoom aJSONRoom = gson.fromJson(aRoom, JSONRoom.class);
-			rooms.add(aJSONRoom);
+	public static JSONRoom getAsJSONRoom(int index) {
+		try {
+			return (JSONRoom)roomList.get(index);
+		} catch (IndexOutOfBoundsException e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
-		return rooms;
+		return null;
 	}
 }

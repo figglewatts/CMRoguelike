@@ -113,7 +113,7 @@ public class Dungeon {
 			// generate a random room index
 			int index = rand.nextInt(RoomReader.roomList.size());
 			
-			JSONRoom newRoom = RoomReader.roomList.get(index);
+			JSONRoom newRoom = RoomReader.getAsJSONRoom(index);
 			
 			// generate a random width and height for the room
 			//int w = ROOM_MIN_SIZE + rand.nextInt(ROOM_MAX_SIZE - ROOM_MIN_SIZE);
