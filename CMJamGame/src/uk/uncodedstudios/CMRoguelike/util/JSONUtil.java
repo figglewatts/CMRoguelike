@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.uncodedstudios.CMRoguelike.Dungeon.JSONRoom;
+import uk.uncodedstudios.CMRoguelike.Enemy.JSONEnemy;
 import uk.uncodedstudios.CMRoguelike.JSON.JSONObject;
 
 import com.google.gson.Gson;
@@ -28,16 +29,28 @@ public class JSONUtil {
 	 * @return A list of elements read from the JSON file specified with the input stream.
 	 * @throws IOException
 	 */
-	public static List<JSONObject> readJsonStream(InputStream in, Gson gson) throws IOException
+	public static List<JSONRoom> readJsonStreamRoom(InputStream in, Gson gson) throws IOException
 	{
 		JsonReader reader = new JsonReader(new InputStreamReader(in));
 		JsonParser jsonParser = new JsonParser();
-		JsonArray roomArray = jsonParser.parse(reader).getAsJsonArray();
-		List<JSONRoom> rooms = new ArrayList<JSONRoom>();
-		for (JsonElement aRoom : roomArray) {
-			JSONRoom aJSONRoom = gson.fromJson(aRoom, JSONRoom.class);
-			rooms.add(aJSONRoom);
+		JsonArray objectArray = jsonParser.parse(reader).getAsJsonArray();
+		List<JSONRoom> objects = new ArrayList<JSONRoom>();
+		for (JsonElement object : objectArray) {
+			JSONRoom aJSONObject = gson.fromJson(object, JSONRoom.class);
+			objects.add(aJSONObject);
 		}
-		return rooms;
+		return objects;
+	}
+	public static List<JSONEnemy> readJsonStreamEnemy(InputStream in, Gson gson) throws IOException
+	{
+		JsonReader reader = new JsonReader(new InputStreamReader(in));
+		JsonParser jsonParser = new JsonParser();
+		JsonArray objectArray = jsonParser.parse(reader).getAsJsonArray();
+		List<JSONEnemy> objects = new ArrayList<JSONEnemy>();
+		for (JsonElement object : objectArray) {
+			JSONEnemy aJSONObject = gson.fromJson(object, JSONEnemy.class);
+			objects.add(aJSONObject);
+		}
+		return objects;
 	}
 }

@@ -1,0 +1,35 @@
+[
+	{
+		"name": "orc",
+		"defense": 0,
+		"attack": 3,
+		"health": 10,
+		"maxHealth": 10,
+		"mana": 10,
+		"texturePath": "textures/enemy/orc.png",
+		"asciiTexturePath": "textures/enemy/orc-ascii.png",
+		"ID": 0
+	},
+	{
+		"name": "goblin",
+		"defense": 1,
+		"attack": 3,
+		"health": 16,
+		"maxHealth": 16,
+		"mana": 10,
+		"texturePath": "textures/enemy/goblin.png",
+		"asciiTexturePath": "textures/enemy/goblin-ascii",
+		"ID": 1
+	},
+	{
+		"name": "troll",
+		"defense": 2,
+		"attack": 3,
+		"health": 25,
+		"maxHealth": 25,
+		"mana": 10,
+		"texturePath": "textures/enemy/troll.png",
+		"asciiTexturePath": "textures/enemy/troll-ascii",
+		"ID": 2
+	}
+]

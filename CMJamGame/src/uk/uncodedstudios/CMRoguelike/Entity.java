@@ -1,5 +1,8 @@
 package uk.uncodedstudios.CMRoguelike;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -16,7 +19,7 @@ public class Entity {
 	private String name;
 	private int xPos;
 	private int yPos;
-	private Texture entityTexture;
+	private List<Texture> textures = new ArrayList<Texture>();
 	private float scale = 2;
 	private boolean blocksMovement = true;
 	private boolean canDraw = true;
@@ -45,11 +48,17 @@ public class Entity {
 	public void setyPos(int yPos) {
 		this.yPos = yPos;
 	}
-	public Texture getEntityTexture() {
-		return entityTexture;
+	public Texture getEntityTexture(int index) {
+		return textures.get(index);
 	}
-	public void setEntityTexture(Texture entityTexture) {
-		this.entityTexture = entityTexture;
+	public void addEntityTexture(Texture entityTexture) {
+		this.textures.add(entityTexture);
+	}
+	public void removeEntityTexture(Texture entityTexture) {
+		this.textures.remove(entityTexture);
+	}
+	public void removeEntityTexture(int index) {
+		this.textures.remove(index);	
 	}
 	public float getScale() {
 		return scale;
@@ -83,7 +92,7 @@ public class Entity {
 		this.name = name;
 		this.xPos = x;
 		this.yPos = y;
-		this.entityTexture = entityTexture;
+		this.addEntityTexture(entityTexture);
 		CMRoguelike.entityList.add(this);
 	}
 	
@@ -97,14 +106,18 @@ public class Entity {
 		}
 	}
 	
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, boolean drawAscii) {
 		Vector2 offset = new Vector2(Camera.Location.x % this.xPos, Camera.Location.y % this.yPos);
 		int offsetX = (int)offset.x;
 		int offsetY = (int)offset.y;
 		
 		if (this.canDraw) {
 			if (MapUtil.IsInFOV(this.getxPosInTiles(), this.getyPosInTiles())) {
-				batch.draw(this.entityTexture, this.xPos - offsetX, this.yPos - offsetY, this.entityTexture.getWidth()*this.scale, this.entityTexture.getHeight()*this.scale);
+				if (drawAscii && this.textures.size() > 1) {
+					batch.draw(this.getEntityTexture(1), this.xPos - offsetX, this.yPos - offsetY, this.getEntityTexture(1).getWidth()*this.scale, this.getEntityTexture(1).getHeight()*this.scale);
+				} else {
+					batch.draw(this.getEntityTexture(0), this.xPos - offsetX, this.yPos - offsetY, this.getEntityTexture(0).getWidth()*this.scale, this.getEntityTexture(0).getHeight()*this.scale);
+				}
 			}
 		}
 	}
@@ -129,7 +142,6 @@ public class Entity {
 	
 	public void kill() {
 		this.canDraw = false;
-		this.setEntityTexture(null);
 		this.setName("dead");
 	}
 }

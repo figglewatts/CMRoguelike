@@ -1,5 +1,7 @@
 package uk.uncodedstudios.CMRoguelike.Enemy;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import uk.uncodedstudios.CMRoguelike.JSON.JSONObject;
 
 /**
@@ -12,13 +14,17 @@ public class JSONEnemy extends JSONObject {
 	private int health;
 	private int maxHealth;
 	private int mana;
-	private String texture;
+	private String texturePath;
+	private String asciiTexturePath;
+	private Texture texture;
+	private Texture asciiTexture;
+	private int ID;
 	
 	public String toString() {
 		return this.name + ", " + Integer.toString(this.defense) + ", "
 				+ Integer.toString(this.attack) + ", " + Integer.toString(this.health) + "/"
 				+ Integer.toString(this.maxHealth) + ", " + Integer.toString(this.mana) + ", "
-				+ this.texture;
+				+ this.texturePath + ", " + Integer.toString(this.ID);
 	}
 
 	public String getName() {
@@ -63,12 +69,40 @@ public class JSONEnemy extends JSONObject {
 		this.mana = mana;
 	}
 
-	public String getTexture() {
+	public String getTexturePath() {
+		return texturePath;
+	}
+	public void setTexturePath(String texture) {
+		this.texturePath = texture;
+	}
+
+	public String getAsciiTexturePath() {
+		return asciiTexturePath;
+	}
+	public void setAsciiTexturePath(String asciiTexturePath) {
+		this.asciiTexturePath = asciiTexturePath;
+	}
+
+	public Texture getTexture() {
 		return texture;
 	}
-	public void setTexture(String texture) {
+	public void setTexture(Texture texture) {
 		this.texture = texture;
 	}
-	
+
+	public Texture getAsciiTexture() {
+		return asciiTexture;
+	}
+	public void setAsciiTexture(Texture asciiTexture) {
+		this.asciiTexture = asciiTexture;
+	}
+
+	public int getID() {
+		return ID;
+	}
+	public void setID(int iD) {
+		ID = iD;
+	}
+
 	public JSONEnemy() { }
 }

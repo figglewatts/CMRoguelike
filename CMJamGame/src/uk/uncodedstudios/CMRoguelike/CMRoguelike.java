@@ -9,6 +9,7 @@ import uk.uncodedstudios.CMRoguelike.Character.Player;
 import uk.uncodedstudios.CMRoguelike.Dungeon.Dungeon;
 import uk.uncodedstudios.CMRoguelike.Dungeon.RoomReader;
 import uk.uncodedstudios.CMRoguelike.Enemy.BaseEnemy;
+import uk.uncodedstudios.CMRoguelike.Enemy.EnemyReader;
 import uk.uncodedstudios.CMRoguelike.Enemy.EnemyTextures;
 import uk.uncodedstudios.CMRoguelike.Entities.EntityTextures;
 import uk.uncodedstudios.CMRoguelike.Entities.Fighter;
@@ -43,8 +44,14 @@ public class CMRoguelike implements ApplicationListener {
 	private final int squaresAcross = 26;
 	private final int squaresDown = 16;
 	
+	// TODO: add better support for player ASCII textures (JSON perhaps?)
 	public static Texture playerTexture;
+	public static Texture playerTextureAscii;
 	public static Player player;
+	
+	// TODO: add better support for dungeon ASCII textures
+	public static Texture dungeonTilesTexture;
+	public static Texture dungeonTilesTextureAscii;
 	
 	public static List<Entity> entityList = new ArrayList<Entity>();
 	
@@ -55,6 +62,9 @@ public class CMRoguelike implements ApplicationListener {
 	public static int numberOfKills;
 	
 	public static boolean recomputeFOV = true;
+	
+	public static boolean drawAscii = false; // should we draw ASCII characters instead of textures?
+	public static boolean oldDrawAscii = false;
 	
 	@Override
 	public void create() {		
@@ -67,13 +77,21 @@ public class CMRoguelike implements ApplicationListener {
 		camera.setToOrtho(false, 800, 480);
 		batch = new SpriteBatch();
 		
+		dungeonTilesTexture = new Texture(Gdx.files.internal("textures/level/level-sheet.png"));
+		dungeonTilesTextureAscii = new Texture(Gdx.files.internal("textures/level/level-sheet-ascii.png"));
+		Tile.TileSetTexture = dungeonTilesTexture;
+		
 		// TODO: add support for different sprites for different races
 		playerTexture = new Texture(Gdx.files.internal("textures/player/human.png"));
+		playerTextureAscii = new Texture(Gdx.files.internal("textures/player/human-ascii.png"));
 		player = new Player("player", 0, 0, 1, 3, 30, 10);
-		player.setEntityTexture(playerTexture);
+		player.addEntityTexture(playerTexture);
+		player.addEntityTexture(playerTextureAscii);
 		player.setScale(2);
 		
+		// TODO: add support for loading stuff
 		RoomReader.Initialize();
+		EnemyReader.Initialize();
 		
 		EnemyTextures.Initialize();
 		EntityTextures.Initialize();
@@ -115,7 +133,7 @@ public class CMRoguelike implements ApplicationListener {
 		Entity[] entityArray = entityList.toArray(new Entity[entityList.size()]);
 		for (Entity e : entityArray)
 		{
-			e.draw(batch);
+			e.draw(batch, drawAscii);
 			if (e instanceof BaseEnemy) {
 				if (turnTake) {
 					if (((BaseEnemy)e).isAlive()) {
@@ -188,6 +206,12 @@ public class CMRoguelike implements ApplicationListener {
 			MessageBox.message("You have died!", Color.ORANGE);
 			canGameOverSequence = false;
 		}
+		
+		if (drawAscii) {
+			Tile.TileSetTexture = dungeonTilesTextureAscii;
+		} else {
+			Tile.TileSetTexture = dungeonTilesTexture;
+		}
 	}	
 	
 	private void HandleKeys()
@@ -204,6 +228,15 @@ public class CMRoguelike implements ApplicationListener {
 			} 
 		} else {
 			player.canMoveOrAttack = true;
+		}
+		
+		// toggle the drawing of ASCII characters
+		if (Gdx.input.isKeyPressed(Keys.BACKSLASH) && oldDrawAscii == drawAscii) {
+			oldDrawAscii = drawAscii;
+			drawAscii = !drawAscii;
+		}
+		if (!Gdx.input.isKeyPressed(Keys.BACKSLASH) && oldDrawAscii != drawAscii) {
+			oldDrawAscii = drawAscii;
 		}
 	}
 

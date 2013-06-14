@@ -23,7 +23,7 @@ import com.google.gson.stream.JsonReader;
 public class RoomReader {
 	private RoomReader() { }
 	
-	public static List<JSONObject> roomList = new ArrayList<JSONObject>();
+	public static List<JSONRoom> roomList = new ArrayList<JSONRoom>();
 	
 	public static Map<String, JSONRoom> roomMap = new HashMap<String, JSONRoom>();
 	
@@ -32,7 +32,7 @@ public class RoomReader {
 	public static void Initialize()
 	{
 		try {
-			roomList = JSONUtil.readJsonStream(Gdx.files.internal("data/rooms.json").read(), gson);
+			roomList = JSONUtil.readJsonStreamRoom(Gdx.files.internal("data/rooms.json").read(), gson);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -45,6 +45,15 @@ public class RoomReader {
 	public static JSONRoom getAsJSONRoom(int index) {
 		try {
 			return (JSONRoom)roomList.get(index);
+		} catch (IndexOutOfBoundsException e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		return null;
+	}
+	public static JSONRoom getAsJSONRoom(String name) {
+		try {
+			return roomMap.get(name);
 		} catch (IndexOutOfBoundsException e) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());

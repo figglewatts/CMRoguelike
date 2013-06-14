@@ -71,11 +71,6 @@ public class Player extends Fighter{
 			this.setMana(5);
 		}
 	}
-
-	public void draw(SpriteBatch batch)
-	{
-		super.draw(batch);
-	}
 	
 	public void moveOrAttack(int dx, int dy) {
 		if (canMoveOrAttack) {

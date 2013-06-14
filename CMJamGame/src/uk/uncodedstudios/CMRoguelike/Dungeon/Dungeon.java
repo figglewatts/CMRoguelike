@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import uk.uncodedstudios.CMRoguelike.CMRoguelike;
 import uk.uncodedstudios.CMRoguelike.Character.Player;
 import uk.uncodedstudios.CMRoguelike.Enemy.BaseEnemy;
+import uk.uncodedstudios.CMRoguelike.Enemy.EnemyReader;
 import uk.uncodedstudios.CMRoguelike.Enemy.EnemyTextures;
 import uk.uncodedstudios.CMRoguelike.Messaging.MessageBox;
 import uk.uncodedstudios.CMRoguelike.util.MapUtil;
@@ -28,8 +29,6 @@ public class Dungeon {
 	
 	private static List<JSONRoom> roomsMade = new ArrayList<JSONRoom>();
 	//private static List<Room> roomList = new ArrayList<Room>();
-	
-	private static Texture dungeonTilesTexture;
 	
 	private static final int ROOM_MAX_SIZE = 14; // the maximum size (in tiles) a room can be
 	private static final int ROOM_MIN_SIZE = 4; // the minumum size (in tiles) a room can be
@@ -211,16 +210,13 @@ public class Dungeon {
 				int chance = rand.nextInt(99);
 				if (chance < 70) {
 					// create an orc
-					BaseEnemy orc = new BaseEnemy("Orc", xPosInPx, yPosInPx, 0, 3, 10, 10);
-					orc.setEntityTexture(EnemyTextures.orcTexture);
+					BaseEnemy orc = EnemyReader.createEnemy("orc", xPosInPx, yPosInPx);
 				} else if (chance >= 70 && chance < 90) {
 					// create a goblin
-					BaseEnemy goblin = new BaseEnemy("Goblin", xPosInPx, yPosInPx, 1, 3, 16, 10);
-					goblin.setEntityTexture(EnemyTextures.goblinTexture);
+					BaseEnemy goblin = EnemyReader.createEnemy("goblin", xPosInPx, yPosInPx);
 				} else if (chance >= 90 && chance <= 99) {
 					// create a troll
-					BaseEnemy troll = new BaseEnemy("Troll", xPosInPx, yPosInPx, 2, 3, 25, 10);
-					troll.setEntityTexture(EnemyTextures.trollTexture);
+					BaseEnemy troll = EnemyReader.createEnemy("troll", xPosInPx, yPosInPx);
 				}
 			}
 		}
@@ -228,8 +224,6 @@ public class Dungeon {
 	
 	public static void Initialize() {
 		dungeon = new Level(MAP_WIDTH, MAP_HEIGHT);
-		dungeonTilesTexture = new Texture(Gdx.files.internal("textures/level/level-sheet.png"));
-		Tile.TileSetTexture = dungeonTilesTexture;
 		Tile.RenderTileWidth = 32;
 		Tile.RenderTileHeight = 32;
 		
