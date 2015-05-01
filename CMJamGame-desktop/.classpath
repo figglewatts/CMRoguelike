@@ -3,9 +3,15 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="assets"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl.jar" sourcepath="libs/gdx-backend-lwjgl-sources.jar"/>
-	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl-natives.jar" sourcepath="libs/gdx-backend-lwjgl-natives.jar"/>
-	<classpathentry kind="lib" path="libs/gdx-natives.jar" sourcepath="libs/gdx-natives.jar"/>
+	<classpathentry kind="lib" path="K:/LibGDX-1.5.6/gdx-backend-lwjgl.jar" sourcepath="K:/LibGDX-1.5.6/gdx-backend-lwjgl.jar"/>
+	<classpathentry kind="lib" path="K:/LibGDX-1.5.6/gdx-backend-lwjgl-natives.jar" sourcepath="K:/LibGDX-1.5.6/gdx-backend-lwjgl-natives.jar"/>
+	<classpathentry kind="lib" path="K:/LibGDX-1.5.6/gdx-natives.jar" sourcepath="K:/LibGDX-1.5.6/gdx-natives.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/CMRoguelike"/>
+	<classpathentry kind="lib" path="K:/LibGDX-1.5.6/gdx.jar" sourcepath="K:/LibGDX-1.5.6/gdx.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://libgdx.badlogicgames.com/nightlies/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="K:/slagd/slagd.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

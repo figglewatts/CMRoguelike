@@ -64,7 +64,13 @@ public class JSONRoom extends JSONObject {
 	}
 	
 	public int getTileIDFromPos(int x, int y) {
-		return layout[y][x];
+		try {
+			return layout[y][x];
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			return 0;
+		}
 	}
 	
 	public Vector2 getCenter() {

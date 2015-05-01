@@ -10,7 +10,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
+import figglewatts.slagd.graphics.tile.Tile;
+import figglewatts.slagd.graphics.tile.TileMap;
 import uk.uncodedstudios.CMRoguelike.CMRoguelike;
 import uk.uncodedstudios.CMRoguelike.Character.Player;
 import uk.uncodedstudios.CMRoguelike.Enemy.BaseEnemy;
@@ -18,8 +21,6 @@ import uk.uncodedstudios.CMRoguelike.Enemy.EnemyReader;
 import uk.uncodedstudios.CMRoguelike.Enemy.EnemyTextures;
 import uk.uncodedstudios.CMRoguelike.Messaging.MessageBox;
 import uk.uncodedstudios.CMRoguelike.util.MapUtil;
-import uk.uncodedstudios.uncode2d.tileengine.*;
-import uk.uncodedstudios.uncode2d.camera.*;
 
 /**
  * @author Figglewatts
@@ -42,7 +43,7 @@ public class Dungeon {
 	
 	private static Random rand = new Random();
 	
-	public static Level dungeon;
+	public static TileMap dungeon;
 	
 	private static int numberOfMonsters;
 	
@@ -57,8 +58,8 @@ public class Dungeon {
 			for (int x = xPos; x < xPos+w; x++) {
 				if (room.getTileIDFromPos(x-xPos, y-yPos) != 0) {
 					System.out.println(room.getTileIDFromPos((x-xPos), (y-yPos)));
-					dungeon.Rows.get(y).Columns.get(x).setTileID(room.getTileIDFromPos(x-xPos, y-yPos));
-					dungeon.Rows.get(y).Columns.get(x).setIsSolid(false);
+					dungeon.getCell(x, y).addTile(room.getTileIDFromPos(x, y), 0);
+					// TODO: set to not solid
 				}
 			}
 		}
@@ -83,7 +84,9 @@ public class Dungeon {
 	{
 		for (int x = Math.min(x1, x2); x < Math.max(x1, x2)+1; x++)
 		{
-			dungeon.Rows.get(y).Columns.get(x).setIsSolid(false);
+			//dungeon.Rows.get(y).Columns.get(x).setIsSolid(false);
+			dungeon.getCell(x, y).setTileID(1);
+			//TODO: set to not solid
 		}
 	}
 	
@@ -91,17 +94,21 @@ public class Dungeon {
 	{
 		for (int y = Math.min(y1, y2); y < Math.max(y1, y2)+1; y++)
 		{
-			dungeon.Rows.get(y).Columns.get(x).setIsSolid(false);
+			//dungeon.Rows.get(y).Columns.get(x).setIsSolid(false);
+			dungeon.getCell(x, y).setTileID(1);
+			//TODO: set to not solid
 		}
 	}
 	
 	public static void Generate() {
 		// fill the map with blocked tiles
-		for (int y = 0; y < dungeon.MapHeight; y++)
+		for (int y = 0; y < dungeon.getMapHeight(); y++)
 		{
-			for (int x = 0; x < dungeon.MapWidth; x++)
+			for (int x = 0; x < dungeon.getMapWidth(); x++)
 			{
-				dungeon.Rows.get(y).Columns.get(x).setIsSolid(true);
+				//dungeon.Rows.get(y).Columns.get(x).setIsSolid(true);
+				//TODO: set to solid
+				dungeon.getCell(x, y).setTileID(0);
 			}
 		}
 		
@@ -161,10 +168,10 @@ public class Dungeon {
 				
 				if (numberOfRooms == 0) {
 					System.out.println(newRoom.getX() + ", " + newRoom.getY());
-					CMRoguelike.player.setxPos(newX*Tile.RenderTileWidth);
-					CMRoguelike.player.setyPos(newY*Tile.RenderTileHeight);
+					CMRoguelike.player.setxPos(newX*Tile.TILE_WIDTH);
+					CMRoguelike.player.setyPos(newY*Tile.TILE_HEIGHT);
 					setCameraToPlayer(newX, newY);
-					System.out.println("PlayerPos: " + new Vector2(CMRoguelike.player.getxPos(), CMRoguelike.player.getyPos()) + ", CameraPos: " + Camera.Location);
+					System.out.println("PlayerPos: " + new Vector2(CMRoguelike.player.getxPos(), CMRoguelike.player.getyPos()) + ", CameraPos: " + CMRoguelike.camera.position);
 				} else {
 					int random = rand.nextInt(numberOfRooms);
 					
@@ -205,8 +212,8 @@ public class Dungeon {
 			Vector2 location = MapUtil.GetRoomNonSolidTiles(room).get(rand.nextInt(size));
 			
 			if (!MapUtil.IsBlocked(location)) {
-				int xPosInPx = (int)location.x * Tile.RenderTileWidth;
-				int yPosInPx = (int)location.y * Tile.RenderTileHeight;
+				int xPosInPx = (int)location.x * Tile.TILE_WIDTH;
+				int yPosInPx = (int)location.y * Tile.TILE_HEIGHT;
 				int chance = rand.nextInt(99);
 				if (chance < 70) {
 					// create an orc
@@ -223,49 +230,43 @@ public class Dungeon {
 	}
 	
 	public static void Initialize() {
-		dungeon = new Level(MAP_WIDTH, MAP_HEIGHT);
-		Tile.RenderTileWidth = 32;
-		Tile.RenderTileHeight = 32;
-		
-		dungeon.MapWidth = MAP_WIDTH;
-		dungeon.MapHeight = MAP_HEIGHT;
+		dungeon = new TileMap(MAP_WIDTH, MAP_HEIGHT);
 	}
 	
-	public static void Draw(SpriteBatch batch, Level myMap, int squaresDown, int squaresAcross) {
-		Vector2 firstSquare = new Vector2(Camera.Location.x / Tile.RenderTileWidth, Camera.Location.y / Tile.RenderTileHeight);
+	public static void Draw(SpriteBatch batch, TileMap myMap, int squaresDown, int squaresAcross) {
+		Vector2 firstSquare = new Vector2(CMRoguelike.camera.position.x / Tile.TILE_WIDTH, CMRoguelike.camera.position.y / Tile.TILE_HEIGHT);
 		int firstX = (int)firstSquare.x;
 		int firstY = (int)firstSquare.y;
 		
-		Vector2 squareOffset = new Vector2(Camera.Location.x % Tile.RenderTileWidth, Camera.Location.y % Tile.RenderTileHeight);
+		Vector2 squareOffset = new Vector2(CMRoguelike.camera.position.x % Tile.TILE_WIDTH, CMRoguelike.camera.position.y % Tile.TILE_HEIGHT);
 		int offsetX = (int)squareOffset.x;
 		int offsetY = (int)squareOffset.y;
-		
 		for (int y = 0; y < squaresDown; y++)
 		{
 			for (int x = 0; x < squaresAcross; x++)
 			{
 				//System.out.println("Viewable?: " + myMap.Rows.get(y).Columns.get(x).getIsViewable());
-				batch.draw(Tile.TileSetTexture, 
-						(float)((x * Tile.RenderTileWidth) - offsetX), 
-						(float)(((y * Tile.RenderTileHeight) - offsetY)),
-						(float)Tile.RenderTileWidth, 
-						(float)Tile.RenderTileHeight,
-						(int)Tile.GetSourceRectangle(myMap.Rows.get(y+firstY).Columns.get(x+firstX).getTileID()).x,
-						(int)Tile.GetSourceRectangle(myMap.Rows.get(y+firstY).Columns.get(x+firstX).getTileID()).y,
-						(int)Tile.GetSourceRectangle(myMap.Rows.get(y+firstY).Columns.get(x+firstX).getTileID()).width,
-						(int)Tile.GetSourceRectangle(myMap.Rows.get(y+firstY).Columns.get(x+firstX).getTileID()).height,
+				batch.draw(Tile.TILESET_TEXTURES.get(0), 
+						(float)((x * Tile.TILE_WIDTH) - offsetX), 
+						(float)(((y * Tile.TILE_HEIGHT) - offsetY)),
+						(float)Tile.TILE_WIDTH, 
+						(float)Tile.TILE_HEIGHT,
+						(int)Tile.getSourceRectangle(myMap.getCell(x+firstX, y+firstY).getTileID(0), 0).getRegionX(),
+						(int)Tile.getSourceRectangle(myMap.getCell(x+firstX, y+firstY).getTileID(0), 0).getRegionY(),
+						(int)Tile.getSourceRectangle(myMap.getCell(x+firstX, y+firstY).getTileID(0), 0).getRegionWidth(),
+						(int)Tile.getSourceRectangle(myMap.getCell(x+firstX, y+firstY).getTileID(0), 0).getRegionHeight(),
 						false, false);
-				if (myMap.Rows.get(y+firstY).Columns.get(x+firstX).getIsViewable() == false &&
+				/*if (myMap.Rows.get(y+firstY).Columns.get(x+firstX).getIsViewable() == false &&
 						myMap.Rows.get(y+firstY).Columns.get(x+firstX).getIsExplored() == true) {	
 					batch.draw(Tile.TileSetTexture, 
 							(float)((x * Tile.RenderTileWidth) - offsetX), 
 							(float)(((y * Tile.RenderTileHeight) - offsetY)),
 							(float)Tile.RenderTileWidth, 
 							(float)Tile.RenderTileHeight,
-							(int)Tile.GetSourceRectangle(2).x,
-							(int)Tile.GetSourceRectangle(2).y,
-							(int)Tile.GetSourceRectangle(2).width,
-							(int)Tile.GetSourceRectangle(2).height,
+							(int)Tile.getSourceRectangle(2).x,
+							(int)Tile.getSourceRectangle(2).y,
+							(int)Tile.getSourceRectangle(2).width,
+							(int)Tile.getSourceRectangle(2).height,
 							false, false);
 				} else if (myMap.Rows.get(y+firstY).Columns.get(x+firstX).getIsExplored() == false) {
 					batch.draw(Tile.TileSetTexture, 
@@ -273,12 +274,12 @@ public class Dungeon {
 							(float)(((y * Tile.RenderTileHeight) - offsetY)),
 							(float)Tile.RenderTileWidth, 
 							(float)Tile.RenderTileHeight,
-							(int)Tile.GetSourceRectangle(3).x,
-							(int)Tile.GetSourceRectangle(3).y,
-							(int)Tile.GetSourceRectangle(3).width,
-							(int)Tile.GetSourceRectangle(3).height,
+							(int)Tile.getSourceRectangle(3).x,
+							(int)Tile.getSourceRectangle(3).y,
+							(int)Tile.getSourceRectangle(3).width,
+							(int)Tile.getSourceRectangle(3).height,
 							false, false);
-				}
+				}*/
 			}
 		}
 	}
@@ -289,26 +290,26 @@ public class Dungeon {
 		{
 			for (int x = 0; x < MAP_WIDTH; x++)
 			{
-				if (dungeon.Rows.get(y).Columns.get(x).getIsSolid() == true) {
+				/*if (dungeon.Rows.get(y).Columns.get(x).getIsSolid() == true) {
 					dungeon.Rows.get(y).Columns.get(x).setTileID(0);
 				} else {
 					dungeon.Rows.get(y).Columns.get(x).setTileID(1);
-				}
+				}*/
 			}
 		}
 	}
 	
 	private static void setCameraToPlayer(int newX, int newY)
 	{
-		Camera.Location = new Vector2((newX*Tile.RenderTileWidth) - normalizeToTileDimensions(Gdx.graphics.getWidth()/2, true), (newY*Tile.RenderTileHeight) - normalizeToTileDimensions(Gdx.graphics.getHeight()/2, false));
+		//CMRoguelike.camera. = new Vector3((newX*Tile.TILE_WIDTH) - normalizeToTileDimensions(Gdx.graphics.getWidth()/2, true), (newY*Tile.TILE_HEIGHT) - normalizeToTileDimensions(Gdx.graphics.getHeight()/2, false), 0);
 	}
 	
 	private static int normalizeToTileDimensions(int num, boolean width)
 	{
 		if (width) {
-			return Tile.RenderTileWidth*(num / Tile.RenderTileWidth);
+			return Tile.TILE_WIDTH*(num / Tile.TILE_WIDTH);
 		} else {
-			return Tile.RenderTileHeight*(num / Tile.RenderTileHeight);
+			return Tile.TILE_HEIGHT*(num / Tile.TILE_HEIGHT);
 		}
 	}
 }

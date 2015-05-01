@@ -3,14 +3,14 @@ package uk.uncodedstudios.CMRoguelike;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import uk.uncodedstudios.CMRoguelike.util.EntityUtil;
 import uk.uncodedstudios.CMRoguelike.util.MapUtil;
-import uk.uncodedstudios.uncode2d.camera.Camera;
-import uk.uncodedstudios.uncode2d.tileengine.Tile;
+import figglewatts.slagd.graphics.tile.*;
 
 /**
  * A generic entity, is used for the player, a monster an item OR STAIRS
@@ -34,7 +34,7 @@ public class Entity {
 		return xPos;
 	}
 	public int getxPosInTiles() {
-		return xPos / Tile.RenderTileWidth;
+		return xPos / Tile.TILE_WIDTH;
 	}
 	public void setxPos(int xPos) {
 		this.xPos = xPos;
@@ -43,7 +43,7 @@ public class Entity {
 		return yPos;
 	}
 	public int getyPosInTiles() {
-		return yPos / Tile.RenderTileHeight;
+		return yPos / Tile.TILE_HEIGHT;
 	}
 	public void setyPos(int yPos) {
 		this.yPos = yPos;
@@ -98,16 +98,16 @@ public class Entity {
 	
 	public void move(int dx, int dy)
 	{
-		dx *= Tile.RenderTileWidth;
-		dy *= Tile.RenderTileHeight;
-		if (!MapUtil.IsBlocked((this.xPos + dx)/Tile.RenderTileWidth, (this.yPos + dy)/Tile.RenderTileHeight)) {
+		dx *= Tile.TILE_WIDTH;
+		dy *= Tile.TILE_HEIGHT;
+		if (!MapUtil.IsBlocked((this.xPos + dx)/Tile.TILE_WIDTH, (this.yPos + dy)/Tile.TILE_HEIGHT)) {
 			this.xPos += dx;
 			this.yPos += dy;
 		}
 	}
 	
 	public void draw(SpriteBatch batch, boolean drawAscii) {
-		Vector2 offset = new Vector2(Camera.Location.x % this.xPos, Camera.Location.y % this.yPos);
+		Vector2 offset = new Vector2(CMRoguelike.camera.position.x % this.xPos, CMRoguelike.camera.position.y % this.yPos);
 		int offsetX = (int)offset.x;
 		int offsetY = (int)offset.y;
 		
@@ -137,7 +137,7 @@ public class Entity {
 		int dx = other.getxPos() - this.xPos;
 		int dy = other.getyPos() - this.yPos;
 		
-		return ((float)Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) / Tile.RenderTileWidth;
+		return ((float)Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) / Tile.TILE_HEIGHT;
 	}
 	
 	public void kill() {
